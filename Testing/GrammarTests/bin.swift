@@ -20,6 +20,15 @@ struct GrammarTests {
                 )
                 try Expect.true(analysis.unreachable.isEmpty, "All productions are reachable")
             }
+            Test("canonical_language_symbol_lookups") {
+                let language = try ArithmeticGrammar.language()
+                try Expect.equal(language.production(named: "expression")?.name,
+                                 "expression", "production lookup")
+                try Expect.equal(language.terminal(named: "identifier")?.name,
+                                 "identifier", "terminal lookup")
+                try Expect.equal(language.production(named: "missing")?.name, nil,
+                                 "missing production")
+            }
             Test("reject_undefined_symbol") {
                 do {
                     _ = try Grammar.Language(
