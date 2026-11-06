@@ -81,6 +81,19 @@ struct GrammarTests {
                     )
                 }
             }
+            Test("tree_sitter_grammar_emission_is_deterministic") {
+                let language = try ArithmeticGrammar.language()
+                let expected = try GrammarTreeSitter.emit(language)
+                try Expect.true(
+                    expected.grammarJSON.contains("\"rules\":{\"source_file\":"),
+                    "start rule must remain first"
+                )
+                for _ in 0..<32 {
+                    let actual = try GrammarTreeSitter.emit(language)
+                    try Expect.equal(actual.grammarJSON, expected.grammarJSON, "stable grammar JSON")
+                    try Expect.equal(actual.queries, expected.queries, "stable highlight queries")
+                }
+            }
             Test("tree_sitter_end_to_end") {
                 try TreeSitterConformance.run()
             }

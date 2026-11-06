@@ -1,3 +1,4 @@
+import Foundation
 import Grammar
 import Primitives
 
@@ -46,7 +47,7 @@ public enum GrammarTreeSitter {
 
         let members = try entries.map { name, value in
             let key = try JSONValue.string(name).toJSONString(prettyPrinted: false)
-            let content = try value.toJSONString(prettyPrinted: false)
+            let content = try sortedJSON(value)
             return "\(key):\(content)"
         }.joined(separator: ",")
 
@@ -56,7 +57,7 @@ public enum GrammarTreeSitter {
         ]
         if !language.extras.isEmpty {
             let extras = language.extras.map { TreeSitterLowering.rule($0, names: names) }
-            fields.append("\"extras\":\(try JSONValue.array(extras).toJSONString(prettyPrinted: false))")
+            fields.append("\"extras\":\(try sortedJSON(.array(extras)))")
         }
         if let word = language.word {
             fields.append("\"word\":\(try JSONValue.string(word).toJSONString(prettyPrinted: false))")
@@ -71,5 +72,19 @@ public enum GrammarTreeSitter {
             grammarJSON: "{\(fields.joined(separator: ","))}\n",
             queries: ["highlights.scm": try TreeSitterQueries.highlights(language)]
         )
+    }
+
+    /// Sort nested JSON keys without changing the outer Tree-sitter start-rule order.
+    private static func sortedJSON(_ value: JSONValue) throws -> String {
+        let original = try value.toJSONString(prettyPrinted: false)
+        let decoded = try JSONSerialization.jsonObject(
+            with: Data(original.utf8),
+            options: [.fragmentsAllowed]
+        )
+        let canonical = try JSONSerialization.data(
+            withJSONObject: decoded,
+            options: [.fragmentsAllowed, .sortedKeys, .withoutEscapingSlashes]
+        )
+        return String(decoding: canonical, as: UTF8.self)
     }
 }
