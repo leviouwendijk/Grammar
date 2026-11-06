@@ -69,7 +69,7 @@ public enum GrammarTreeSitter {
 
         return Artifacts(
             grammarJSON: "{\(fields.joined(separator: ","))}\n",
-            queries: ["highlights.scm": TreeSitterQueries.highlights(language)]
+            queries: ["highlights.scm": try TreeSitterQueries.highlights(language)]
         )
     }
 }

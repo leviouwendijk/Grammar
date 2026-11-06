@@ -14,6 +14,7 @@ public extension Grammar {
         case missing_start(String)
         case invalid_expression(String)
         case nullable_repetition
+        case invalid_highlight(String)
     }
 }
 
@@ -56,6 +57,7 @@ enum Analyzer {
         let productionNames = Set(language.productions.map(\.name))
         let terminalNames = Set(language.terminals.map(\.name))
         let expressions = language.productions.map(\.expression) + language.extras
+        try HighlightAnalysis.check(language)
 
         for expression in expressions {
             try check(
@@ -147,7 +149,7 @@ enum Analyzer {
         }
     }
 
-    private static func validRole(_ value: String) -> Bool {
+    static func validRole(_ value: String) -> Bool {
         !value.isEmpty && value.split(separator: ".", omittingEmptySubsequences: false).allSatisfy {
             validName(String($0))
         }

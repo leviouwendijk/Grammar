@@ -64,7 +64,16 @@ enum ArithmeticGrammar {
                 .pattern("\\s+"),
                 .symbol(.terminal("comment"))
             ],
-            word: "identifier"
+            word: "identifier",
+            highlights: [
+                .field(production: "declaration", name: "name", role: "property"),
+                .symbol(.terminal("identifier"), within: "expression", role: "variable"),
+                .literal("=", role: "operator"),
+                .literal("+", role: "operator"),
+                .literal("*", role: "operator"),
+                .literal("(", role: "punctuation.bracket"),
+                .literal(")", role: "punctuation.bracket")
+            ]
         )
     }
 }

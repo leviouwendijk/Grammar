@@ -8,6 +8,7 @@ public extension Grammar {
         public let terminals: [Terminal]
         public let extras: [Expression]
         public let word: String?
+        public let highlights: [Highlight]
 
         public init(
             name: String,
@@ -15,7 +16,8 @@ public extension Grammar {
             productions: [Production],
             terminals: [Terminal] = [],
             extras: [Expression] = [],
-            word: String? = nil
+            word: String? = nil,
+            highlights: [Highlight] = []
         ) throws {
             self.name = name
             self.start = start
@@ -23,6 +25,7 @@ public extension Grammar {
             self.terminals = terminals
             self.extras = extras
             self.word = word
+            self.highlights = highlights
             _ = try analyze()
         }
 
@@ -38,7 +41,8 @@ public extension Grammar {
                 productions: values.decode([Production].self, forKey: .productions),
                 terminals: values.decodeIfPresent([Terminal].self, forKey: .terminals) ?? [],
                 extras: values.decodeIfPresent([Expression].self, forKey: .extras) ?? [],
-                word: values.decodeIfPresent(String.self, forKey: .word)
+                word: values.decodeIfPresent(String.self, forKey: .word),
+                highlights: values.decodeIfPresent([Highlight].self, forKey: .highlights) ?? []
             )
         }
 
@@ -49,6 +53,7 @@ public extension Grammar {
             case terminals
             case extras
             case word
+            case highlights
         }
     }
 }

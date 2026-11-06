@@ -59,6 +59,28 @@ struct GrammarTests {
                     throw Failure.unexpected_acceptance
                 } catch Grammar.Error.nullable_repetition {}
             }
+            Test("highlighting declarations are typed, validated, and Codable") {
+                let language = try ArithmeticGrammar.language()
+                let data = try JSONEncoder().encode(language)
+                let decoded = try JSONDecoder().decode(Grammar.Language.self, from: data)
+                try Expect.equal(decoded.highlights, language.highlights, "round-trip captures")
+                try Expect.throwsError("unknown field cannot be highlighted") {
+                    _ = try Grammar.Language(
+                        name: "invalid_highlighting",
+                        start: "document",
+                        productions: [.init(name: "document", expression: .literal("x"))],
+                        highlights: [.field(production: "document", name: "missing", role: "property")]
+                    )
+                }
+                try Expect.throwsError("unknown literal cannot be highlighted") {
+                    _ = try Grammar.Language(
+                        name: "invalid_highlighting",
+                        start: "document",
+                        productions: [.init(name: "document", expression: .literal("x"))],
+                        highlights: [.literal("y", role: "operator")]
+                    )
+                }
+            }
             Test("tree_sitter_end_to_end") {
                 try TreeSitterConformance.run()
             }
@@ -192,7 +214,7 @@ private enum TreeSitterConformance {
         )
         try requireSuccess(highlighted, stage: "query generated highlights")
         try Expect.true(highlighted.output.contains("capture: "), "The highlight query returned captures")
-        for capture in ["keyword", "variable", "comment"] {
+        for capture in ["keyword", "variable", "comment", "property", "operator", "punctuation.bracket"] {
             try Expect.true(highlighted.output.contains(capture), "The \(capture) capture was returned")
         }
     }
