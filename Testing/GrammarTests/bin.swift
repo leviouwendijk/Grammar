@@ -81,6 +81,50 @@ struct GrammarTests {
                     )
                 }
             }
+            Test("conditional_highlighting_selectors_are_validated_and_codable") {
+                let base = try ArithmeticGrammar.language()
+                let extra: [Grammar.Highlight] = [
+                    .matching(
+                        selector: .node(.terminal("identifier")),
+                        text: .any_of(["result", "counter"]),
+                        role: "variable.builtin",
+                        priority: 120
+                    ),
+                    .matching(
+                        selector: .node(.terminal("identifier")),
+                        text: .matches("^[A-Z_]+$"),
+                        role: "constant",
+                        priority: 110
+                    )
+                ]
+                let combined = try base.addingHighlights(extra)
+                let encoded = try JSONEncoder().encode(combined)
+                let decoded = try JSONDecoder().decode(Grammar.Language.self, from: encoded)
+                try Expect.equal(decoded.highlights, combined.highlights, "Codable conditional highlighting")
+                let queries = try GrammarTreeSitter.emit(base, additionalHighlights: extra).queries
+                guard let source = queries["highlights.scm"] else { throw Failure.unexpected_acceptance }
+                try Expect.true(source.contains("#any-of? @variable.builtin"), "generated membership predicate")
+                try Expect.true(source.contains("#match? @constant"), "generated regular expression predicate")
+                try Expect.true(source.contains("#set! priority 120"), "explicit capture priority")
+                try Expect.throwsError("empty membership predicate") {
+                    _ = try base.addingHighlights([
+                        .matching(selector: .node(.terminal("identifier")), text: .any_of([]),
+                                  role: "keyword", priority: 120)
+                    ])
+                }
+                try Expect.throwsError("unknown selector") {
+                    _ = try base.addingHighlights([
+                        .matching(selector: .field(production: "missing", name: "name"),
+                                  text: .equals("x"), role: "keyword", priority: 120)
+                    ])
+                }
+                try Expect.throwsError("invalid priority") {
+                    _ = try base.addingHighlights([
+                        .matching(selector: .node(.terminal("identifier")),
+                                  text: .equals("x"), role: "keyword", priority: -1)
+                    ])
+                }
+            }
             Test("tree_sitter_grammar_emission_is_deterministic") {
                 let language = try ArithmeticGrammar.language()
                 let expected = try GrammarTreeSitter.emit(language)

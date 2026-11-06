@@ -13,8 +13,17 @@ public enum GrammarTreeSitter {
         public let queries: [String: String]
     }
 
-    public static func emit(_ language: Grammar.Language) throws -> Artifacts {
-        _ = try language.analyze()
+    public static func emit(
+        _ language: Grammar.Language,
+        additionalHighlights: [Grammar.Highlight] = []
+    ) throws -> Artifacts {
+        let queryLanguage: Grammar.Language
+        if additionalHighlights.isEmpty {
+            queryLanguage = language
+        } else {
+            queryLanguage = try language.addingHighlights(additionalHighlights)
+        }
+        _ = try queryLanguage.analyze()
 
         let names = Dictionary(uniqueKeysWithValues: language.productions.map {
             ($0.name, $0.visibility == .hidden ? "_\($0.name)" : $0.name)
@@ -70,7 +79,7 @@ public enum GrammarTreeSitter {
 
         return Artifacts(
             grammarJSON: "{\(fields.joined(separator: ","))}\n",
-            queries: ["highlights.scm": try TreeSitterQueries.highlights(language)]
+            queries: ["highlights.scm": try TreeSitterQueries.highlights(queryLanguage)]
         )
     }
 
