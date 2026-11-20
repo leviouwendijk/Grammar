@@ -10,3 +10,5 @@ xcuserdata/
 .env
 .env.*
 .env/*
+**/.testflows/*
+!**/.testflows/snapshots/

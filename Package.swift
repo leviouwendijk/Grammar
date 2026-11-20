@@ -20,21 +20,12 @@ let package = Package(
             name: "grammar_generate",
             targets: ["GrammarGenerator"]
         ),
-        // testing
-        .executable(
-            name: "t_grammar",
-            targets: ["GrammarTests"]
-        )
     ],
     dependencies: [
         .package(
             url: "https://github.com/leviouwendijk/Primitives.git",
             branch: "master"
         ),
-        .package(
-            url: "https://github.com/leviouwendijk/Testing.git",
-            branch: "master"
-        )
     ],
     targets: [
         .target(
@@ -54,15 +45,6 @@ let package = Package(
             name: "GrammarGenerator",
             dependencies: ["Grammar", "GrammarTreeSitter"]
         ),
-        .executableTarget(
-            name: "GrammarTests",
-            dependencies: [
-                "Grammar",
-                "GrammarTreeSitter",
-                .product(name: "Testing", package: "Testing")
-            ],
-            path: "Testing/GrammarTests"
-        )
     ],
     swiftLanguageModes: [.v6]
 )
