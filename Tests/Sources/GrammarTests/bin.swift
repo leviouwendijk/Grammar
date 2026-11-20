@@ -1,4 +1,5 @@
 import Foundation
+import Errors
 import Grammar
 import GrammarTreeSitter
 import Testing
@@ -42,7 +43,15 @@ struct GrammarTests {
                         ]
                     )
                     throw Failure.unexpected_acceptance
-                } catch Grammar.Error.undefined_symbol(.production("missing")) {}
+                } catch let error as Grammar.Error {
+                    try Expect.equal(error, .undefined_symbol(.production("missing")), "undefined production")
+                    try Expect.equal(error.report.diagnostic.identity?.raw, "grammar.undefined_symbol", "code")
+                    try Expect.equal(
+                        error.localizedDescription,
+                        "The production 'missing' is used but not declared.",
+                        "message"
+                    )
+                }
             }
             Test("reject_nullable_repetition") {
                 do {

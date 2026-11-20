@@ -26,11 +26,16 @@ let package = Package(
             url: "https://github.com/leviouwendijk/Primitives.git",
             branch: "master"
         ),
+        .package(
+            url: "https://github.com/leviouwendijk/Errors.git",
+            branch: "master"
+        ),
     ],
     targets: [
         .target(
             name: "Grammar",
             dependencies: [
+                .product(name: "Errors", package: "Errors"),
                 .product(name: "Primitives", package: "Primitives")
             ]
         ),
@@ -38,6 +43,7 @@ let package = Package(
             name: "GrammarTreeSitter",
             dependencies: [
                 "Grammar",
+                .product(name: "Errors", package: "Errors"),
                 .product(name: "Primitives", package: "Primitives")
             ]
         ),

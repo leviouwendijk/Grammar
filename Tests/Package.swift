@@ -19,12 +19,17 @@ let package = Package(
             url: "https://github.com/leviouwendijk/Testing.git",
             branch: "master"
         ),
+        .package(
+            url: "https://github.com/leviouwendijk/Errors.git",
+            branch: "master"
+        ),
         .package(path: ".."),
     ],
     targets: [
         .executableTarget(
             name: "GrammarTests",
             dependencies: [
+                .product(name: "Errors", package: "Errors"),
                 .product(name: "Grammar", package: "Grammar"),
                 .product(name: "GrammarTreeSitter", package: "Grammar"),
                 .product(name: "Testing", package: "Testing")
