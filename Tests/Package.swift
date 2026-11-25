@@ -20,7 +20,7 @@ let package = Package(
             branch: "master"
         ),
         .package(
-            url: "https://github.com/leviouwendijk/Errors.git",
+            url: "https://github.com/swift-lco/Errors.git",
             branch: "master"
         ),
         .package(path: ".."),

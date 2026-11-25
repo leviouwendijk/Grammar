@@ -13,7 +13,7 @@
     {
       "identity" : "errors",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/leviouwendijk/Errors.git",
+      "location" : "https://github.com/swift-lco/Errors.git",
       "state" : {
         "branch" : "master",
         "revision" : "3317793dc05c9ac49e6a543c1ec1aa224276d8e1"
@@ -22,7 +22,7 @@
     {
       "identity" : "primitives",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/leviouwendijk/Primitives.git",
+      "location" : "https://github.com/swift-lco/Primitives.git",
       "state" : {
         "branch" : "master",
         "revision" : "ce700eaf93a39fd4998f446137c80e2fd5df60fd"
