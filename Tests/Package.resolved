@@ -40,7 +40,7 @@
     {
       "identity" : "testing",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/leviouwendijk/Testing.git",
+      "location" : "https://github.com/swift-tooling/Testing.git",
       "state" : {
         "branch" : "master",
         "revision" : "abe024a50cfbe3ebab5e538e023d30616a35d3a2"
